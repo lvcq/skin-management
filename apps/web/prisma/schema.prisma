@@ -1,0 +1,70 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Account{
+  id  String  @id @db.VarChar(64)
+  
+  /// 用户名称
+  username  String  @db.VarChar(32) @unique
+  
+  /// 用户密码
+  password String @db.VarChar(128)
+  
+  /// 帐号类型，默认为普通用户
+  type  AccountType  @default(NORMAL)
+  
+  /// 创建时间
+  create_at DateTime  @default(now())
+
+  /// 更新事件
+  update_at DateTime  @updatedAt @default(now())
+}
+
+enum AccountType{
+  ADMIN
+  NORMAL
+  
+}
+
+
+/// 期会信息表
+model Group{
+  id String @id @db.VarChar(64)
+
+  /// 期会名称
+  group_name String @db.VarChar(32) @unique
+
+  /// 期会描述
+  description String @db.VarChar(256) @default("")
+  
+  /// 期会状态
+  status GroupStatus @default(InProgress)
+
+  /// 创建者
+  user_id String @db.VarChar(64)
+
+  /// 创建时间
+  create_at DateTime @default(now())
+
+  /// 更新时间
+  update_at DateTime @default(now()) @updatedAt
+
+}
+
+enum GroupStatus{
+  InProgress
+  Complete
+}
